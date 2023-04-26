@@ -33,7 +33,19 @@ def main():
     dts_df = pl.read_csv("./data/decade_team_stats.csv")
     elo_df = pl.read_csv("./data/nfl_elo.csv")
     print(dts_df)
-    print(elo_df)
+
+    # in terms of ranks (lower number is better)
+    decade_sum_stats = ( dts_df.groupby("Tm").agg(
+        [
+            pl.col('W').sum().alias('total_wins'),
+            pl.col("L").sum().alias('total_losses'),
+            pl.col("T").sum().alias('total_ties'),
+            pl.col("PF").sum().alias('total_points_for')
+        ]
+    )
+       )
+    print(decade_sum_stats)
+
     print(current_time())
     return 0
 
