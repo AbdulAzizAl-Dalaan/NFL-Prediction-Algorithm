@@ -6,11 +6,20 @@ from numba import jit
 import seaborn as sns
 from datetime import datetime
 from sklearn.manifold import TSNE
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_selection import SelectFromModel
+import warnings
 import matplotlib.pyplot as plt
 
+columns_to_normalize = ['PF', 'PA', 'PD', 'Off Pts Rank', 'Off Yds Rank', 'Def Pts Rank', 'Def Yds Rank', 'T/G', 'SOS']
+new_columns_ranks = ['PF Rank', 'PA Rank', 'PD Rank', 'Off-PTS Rank', 'Off-YDS Rank', 'Def-PTS Rank', 'Def-YDS Rank', 'T/G Rank', 'SoS Rank']
+
 '''
-Must analyze all data into rankings yearly between 1-32 all the following (x-axis)):
+Must analyze all data into rankings yearly between 1-32 all the following (x-axis):
+    32 means best in the league, 1 means worst in the league
+
     - Points For (PF)
+    - Points Against (PA)
     - Points Differential (PD)
     - Off Points Rank (Off Pts Rank)
     - Off Yds Rank (Off Yds Rank)
@@ -30,34 +39,119 @@ start_time = datetime.now()
 def current_time():
     return (datetime.now() - start_time).total_seconds()
 
-@jit(nopython=True)
-def analyze_dts(dts_np):
+def get_fig1(nfl_data_frame):
     '''
-    dts_np: Decade Team Stats Numpy Array
-    Utilize a numpy array to analyze the data of NFL teams over the past decade
+    returns a figure of the first graph
     '''
-    return 0
+    plt.figure(figsize=(16,10))
+    for i, col in enumerate(new_columns_ranks):
+        plt.subplot(3, 3, i+1)
+        plt.scatter(nfl_data_frame[col], nfl_data_frame['Wins'])
+        plt.xlabel(col)
+        plt.ylabel('Wins')
+        plt.title(f'Wins vs. {col}')
 
-# @jit(nopython=True)
+    plt.tight_layout()
+    return plt
+
+def get_fig2(nfl_data_frame):
+    # Create a t-SNE model with 2 components
+    tsne = TSNE(n_components=2, random_state=42)
+
+    # Fit and transform the t-SNE model on the normalized data
+    tsne_results = tsne.fit_transform(nfl_data_frame[new_columns_ranks])
+
+    # Add t-SNE results as new columns in the pandas DataFrame
+    nfl_data_frame['t-SNE 1'] = tsne_results[:, 0]
+    nfl_data_frame['t-SNE 2'] = tsne_results[:, 1]
+
+    # Create a new column to store the highest ranked statistic for each row
+    nfl_data_frame['Highest Stat'] = nfl_data_frame[new_columns_ranks].idxmax(axis=1)
+
+    # Create the t-SNE scatterplot using Seaborn
+    plt.figure(figsize=(12, 8))
+    sns.scatterplot(data=nfl_data_frame, x='t-SNE 1', y='Wins', hue='Highest Stat', palette='dark', size='Wins', legend="brief")
+    plt.title('t-SNE Graph of Wins vs. t-SNE Dimension 1')
+    return plt
+
+def find_features(nfl_data_frame):
+    '''
+    Originally used a Decision Tree Classifier to find the best features to use, 
+    but it was not as accurate as using the rankings of the stats, hence why I
+    am using Random Forest Classifier to find the best features to use.
+    '''
+    x = nfl_data_frame[new_columns_ranks]
+    y = nfl_data_frame['Wins']
+    
+    # Create a decision tree classifier model using scikit-learn
+    clf = RandomForestClassifier(n_estimators=100, random_state=42)
+
+    clf.fit(x, y)
+
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=UserWarning)
+        selector = SelectFromModel(clf, prefit=True)
+        x_selected = selector.transform(x)
+
+    selected_features = [feature for feature, selected in zip(new_columns_ranks, selector.get_support()) if selected]
+    print("Selected Features:", selected_features)
+    return
+
+
+
 def get_decade_list(dts_df):
     '''
     returns a np array of dataframes for each year in the decade
     '''
     decade_list = []
     for year in decade:
+        # get the year
         temp_df = dts_df.filter(pl.col("Year") == year)
+        # get the teams that have a winning record
         year_df = temp_df.filter(pl.col("W") >= pl.col("L"))
+
+
         year_df = ( year_df.groupby("Tm").agg(
             [
                 pl.col('W').sum().alias('Wins'),
                 pl.col("L").sum().alias('Losses'),
                 pl.col("PF").sum().alias('Points For'),
+                pl.col("PA").sum().alias('Points Against'),
                 pl.col("PD").sum().alias('Point Difference'),
+                pl.col("Off Pts Rank").sum().alias('Off Pts Rank'),
+                pl.col("Off Yds Rank").sum().alias('Off Yds Rank'),
+                pl.col("Def Pts Rank").sum().alias('Def Pts Rank'),
+                pl.col("Def Yds Rank").sum().alias('Def Yds Rank'),
+                pl.col("T/G").sum().alias('T/G'),
+                pl.col("SoS").sum().alias('SoS')
             ]
             )
         )
+
+        year_df = (
+            year_df.with_columns(pl.col("Points For").rank(descending=False).alias("PF Rank"))
+            .with_columns(pl.col("Points Against").rank(descending=True).alias("PA Rank"))
+            .with_columns(pl.col("Point Difference").rank(descending=False).alias("PD Rank"))
+            .with_columns(pl.col("Off Pts Rank").rank(descending=True).alias("Off-PTS Rank"))
+            .with_columns(pl.col("Off Yds Rank").rank(descending=True).alias("Off-YDS Rank"))
+            .with_columns(pl.col("Def Pts Rank").rank(descending=True).alias("Def-PTS Rank"))
+            .with_columns(pl.col("Def Yds Rank").rank(descending=True).alias("Def-YDS Rank"))
+            .with_columns(pl.col("T/G").rank(descending=True).alias("T/G Rank"))
+            .with_columns(pl.col("SoS").rank(descending=True).alias("SoS Rank"))
+        )
         year_df.drop_in_place("Tm")
-        year_df.to_pandas() 
+        year_df.drop_in_place("Points For")
+        year_df.drop_in_place("Points Against")
+        year_df.drop_in_place("Point Difference")
+        year_df.drop_in_place("Off Pts Rank")
+        year_df.drop_in_place("Off Yds Rank")
+        year_df.drop_in_place("Def Pts Rank")
+        year_df.drop_in_place("Def Yds Rank")
+        year_df.drop_in_place("T/G")
+        year_df.drop_in_place("SoS")
+        #print(year_df)
+        #year_df.to_pandas() 
         decade_list.append(year_df)
     # convert to numpy array
     #decade_list = np.array(decade_list)
@@ -70,35 +164,38 @@ def main():
     '''
     dts_df = pl.read_csv("./data/decade_team_stats.csv")
     elo_df = pl.read_csv("./data/nfl_elo.csv")
-    #print(dts_df)
 
-    # in terms of ranks (lower number is better)
-    decade_sum_stats = ( dts_df.groupby("Tm").agg(
-        [
-            pl.col('W').sum().alias('total_wins'),
-            pl.col("L").sum().alias('total_losses'),
-            pl.col("T").sum().alias('total_ties'),
-            pl.col("PF").sum().alias('total_points_for')
-        ]
-    )
-       )
+
+    #print(dts_df)
     decade_list = get_decade_list(dts_df)
-    print(decade_list[-1])
+    # for df in decade_list:
+    #     print(df)
 
     # graph as TSNE
-    tsne = TSNE(n_components=2, perplexity=2)
+    full_decade_frame = pl.concat([year for year in decade_list])
 
-    tsne_results = tsne.fit_transform(decade_list[-2])
+    #sort by wins
+    full_decade_frame = full_decade_frame.sort("Wins", descending=True)
+    
 
-    plt.scatter(tsne_results[:,0], tsne_results[:,1])
+    print(full_decade_frame)
 
-    for i, team in enumerate(decade_list[-1].columns):
-        plt.annotate(team, (tsne_results[i,0], tsne_results[i,1]))
+    full_decade_frame = full_decade_frame.to_pandas()
+
+    # get the figure
+    get_fig1(full_decade_frame)
+    get_fig2(full_decade_frame)
+    print("Finding Top Features via Random Forest Classifier")
+    find_features(full_decade_frame)
+    print(current_time())
 
     plt.show()
 
 
-    print(current_time())
+    ''' 
+    Repeat again for Playoff Teams and Super Bowl Winners
+    '''
+
     return 0
 
 
