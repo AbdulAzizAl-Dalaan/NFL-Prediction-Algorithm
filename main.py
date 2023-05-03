@@ -20,13 +20,13 @@ Must analyze all data into rankings yearly between 1-32 all the following (x-axi
 
     - Points For (PF)
     - Points Against (PA)
-    - Points Differential (PD)
-    - Off Points Rank (Off Pts Rank)
+    - Points Differential (PD)*
+    - Off Points Rank (Off Pts Rank)*
     - Off Yds Rank (Off Yds Rank)
     - Def Points Against Rank (Def Pts Rank)
     - Def Yds Against Rank (Def Yds Rank)
-    - Turnover Differential (T/G)
-    - Strength of Schedule (SOS)
+    - Turnover Differential (T/G)*
+    - Strength of Schedule (SOS)*
 
 Then, make this a graph of these stats ranked in terms of Wins (y-axis):
     - Wins (W)
@@ -55,8 +55,13 @@ def get_fig1(nfl_data_frame):
     return plt
 
 def get_fig2(nfl_data_frame):
+    n_samples = nfl_data_frame.shape[0]
+
+    perplexity_val = min(n_samples - 1, 30)
+
+
     # Create a t-SNE model with 2 components
-    tsne = TSNE(n_components=2, random_state=42)
+    tsne = TSNE(n_components=2, random_state=42, perplexity=perplexity_val)
 
     # Fit and transform the t-SNE model on the normalized data
     tsne_results = tsne.fit_transform(nfl_data_frame[new_columns_ranks])
@@ -95,7 +100,8 @@ def find_features(nfl_data_frame):
         x_selected = selector.transform(x)
 
     selected_features = [feature for feature, selected in zip(new_columns_ranks, selector.get_support()) if selected]
-    print("Selected Features:", selected_features)
+    for feature in selected_features:
+        print(feature)
     return
 
 
@@ -108,9 +114,9 @@ def get_decade_list(dts_df):
     for year in decade:
         # get the year
         temp_df = dts_df.filter(pl.col("Year") == year)
+        
         # get the teams that have a winning record
         year_df = temp_df.filter(pl.col("W") >= pl.col("L"))
-
 
         year_df = ( year_df.groupby("Tm").agg(
             [
@@ -119,6 +125,7 @@ def get_decade_list(dts_df):
                 pl.col("PF").sum().alias('Points For'),
                 pl.col("PA").sum().alias('Points Against'),
                 pl.col("PD").sum().alias('Point Difference'),
+                pl.col("Playoffs").first().alias("Playoffs"),
                 pl.col("Off Pts Rank").sum().alias('Off Pts Rank'),
                 pl.col("Off Yds Rank").sum().alias('Off Yds Rank'),
                 pl.col("Def Pts Rank").sum().alias('Def Pts Rank'),
@@ -128,7 +135,6 @@ def get_decade_list(dts_df):
             ]
             )
         )
-
         year_df = (
             year_df.with_columns(pl.col("Points For").rank(descending=False).alias("PF Rank"))
             .with_columns(pl.col("Points Against").rank(descending=True).alias("PA Rank"))
@@ -179,25 +185,36 @@ def main():
     
 
     print(full_decade_frame)
+    print()
+    playoff_decade_frame = full_decade_frame.filter(pl.col("Playoffs").is_not_null())
+    super_bowl_decade_frame = playoff_decade_frame.filter((pl.col("Playoffs") == "Won SB") | (pl.col("Playoffs") == "Lost SB"))    
 
     full_decade_frame = full_decade_frame.to_pandas()
+    playoff_decade_frame = playoff_decade_frame.to_pandas()
+    super_bowl_decade_frame = super_bowl_decade_frame.to_pandas()
 
-    # get the figure
+    # get figures of Wins vs Stats
     get_fig1(full_decade_frame)
+    get_fig1(playoff_decade_frame)
+    get_fig1(super_bowl_decade_frame)
+
+    # get figures of TSNE of Stats
     get_fig2(full_decade_frame)
-    print("Finding Top Features via Random Forest Classifier")
+    get_fig2(playoff_decade_frame)
+    get_fig2(super_bowl_decade_frame)
+
+    # Find top features from each Dataframe
+    print("Finding Top Features for Winning Teams from 2012-2021")
     find_features(full_decade_frame)
+    print("Finding Top Features for Playoff Teams from 2012-2021")
+    find_features(playoff_decade_frame)
+    print("Finding Top Features for Super Bowl Teams from 2012-2021")
+    find_features(super_bowl_decade_frame)
+
     print(current_time())
 
-    plt.show()
-
-
-    ''' 
-    Repeat again for Playoff Teams and Super Bowl Winners
-    '''
-
+    #plt.show()
     return 0
-
 
 if __name__ == "__main__":
     main()
