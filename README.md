@@ -4,3 +4,4 @@
 - Source for FiveThirtyEight Prediction: https://fivethirtyeight.com/features/how-our-nfl-predictions-work/
 - Source for NFL Elo: https://fivethirtyeight.com/methodology/how-our-nfl-predictions-work/
 - Polars Documentation: https://www.pola.rs/
+- season_data.csv was provided by nfl_data_py library: https://github.com/cooperdff/nfl_data_py

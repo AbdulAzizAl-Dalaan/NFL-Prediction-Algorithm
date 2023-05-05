@@ -2,7 +2,6 @@ import nfl_data_py as nfl
 import polars as pl
 import pandas as pd
 import numpy as np
-from numba import jit
 import seaborn as sns
 from datetime import datetime
 from sklearn.manifold import TSNE
@@ -57,8 +56,8 @@ def get_fig1(nfl_data_frame):
 def get_fig2(nfl_data_frame):
     n_samples = nfl_data_frame.shape[0]
 
+    # adjusting the perplexity value will change the number of records
     perplexity_val = min(n_samples - 1, 30)
-
 
     # Create a t-SNE model with 2 components
     tsne = TSNE(n_components=2, random_state=42, perplexity=perplexity_val)
@@ -85,20 +84,25 @@ def find_features(nfl_data_frame):
     but it was not as accurate as using the rankings of the stats, hence why I
     am using Random Forest Classifier to find the best features to use.
     '''
+
+    # Create the features and target DataFrames
     x = nfl_data_frame[new_columns_ranks]
     y = nfl_data_frame['Wins']
     
     # Create a decision tree classifier model using scikit-learn
     clf = RandomForestClassifier(n_estimators=100, random_state=42)
 
+    # Fit the decision tree classifier model
     clf.fit(x, y)
 
 
+    # ignore the warnings of filters without names of columns
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", category=UserWarning)
         selector = SelectFromModel(clf, prefit=True)
         x_selected = selector.transform(x)
 
+    # Get the names of the filtered columns and print selected features
     selected_features = [feature for feature, selected in zip(new_columns_ranks, selector.get_support()) if selected]
     for feature in selected_features:
         print(feature)
@@ -164,13 +168,8 @@ def get_decade_list(dts_df):
     return decade_list
 
 def main():
-    '''
-    dts_df = pl.read_csv("./decade_team_stats.csv")
-    print(dts_df)
-    '''
     dts_df = pl.read_csv("./data/decade_team_stats.csv")
     elo_df = pl.read_csv("./data/nfl_elo.csv")
-
 
     #print(dts_df)
     decade_list = get_decade_list(dts_df)
@@ -183,9 +182,6 @@ def main():
     #sort by wins
     full_decade_frame = full_decade_frame.sort("Wins", descending=True)
     
-
-    print(full_decade_frame)
-    print()
     playoff_decade_frame = full_decade_frame.filter(pl.col("Playoffs").is_not_null())
     super_bowl_decade_frame = playoff_decade_frame.filter((pl.col("Playoffs") == "Won SB") | (pl.col("Playoffs") == "Lost SB"))    
 
@@ -204,16 +200,21 @@ def main():
     get_fig2(super_bowl_decade_frame)
 
     # Find top features from each Dataframe
-    print("Finding Top Features for Winning Teams from 2012-2021")
+    print("\nFinding Top Features for Winning Teams from 2012-2021")
     find_features(full_decade_frame)
-    print("Finding Top Features for Playoff Teams from 2012-2021")
+    print("\nFinding Top Features for Playoff Teams from 2012-2021")
     find_features(playoff_decade_frame)
-    print("Finding Top Features for Super Bowl Teams from 2012-2021")
+    print("\nFinding Top Features for Super Bowl Teams from 2012-2021")
     find_features(super_bowl_decade_frame)
 
-    print(current_time())
+    print(f"\nProgram finish in {current_time()} seconds")
 
+    '''
+    UNCOMMENT THE FOLLOWING TO SEE FEATURE AND TSNE PLOTS
+    '''
     #plt.show()
+
+    print("UNCOMMENT LINE 215 ABOVE THIS PRINT STATEMENT IN MAIN.PY TO SEE FEATURE AND TSNE PLOTS")
     return 0
 
 if __name__ == "__main__":
