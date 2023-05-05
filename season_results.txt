@@ -1,0 +1,316 @@
+
+Week 1
+NO  def. ATL
+HOU def. IND
+GB  def. MIN
+TEN def. NYG
+LAR def. BUF
+SEA def. DEN
+SF  def. CHI
+LAC def. OAK
+CIN def. PIT
+CLE def. CAR
+WAS def. JAX
+KC  def. ARI
+BAL def. NYJ
+MIA def. NE
+DAL def. TB
+DET def. PHI
+
+Week 2
+DAL def. CIN
+SF  def. SEA
+CAR def. NYG
+GB  def. CHI
+CLE def. NYJ
+TB  def. NO
+OAK def. ARI
+KC  def. LAC
+MIN def. PHI
+MIA def. BAL
+BUF def. TEN
+HOU def. DEN
+LAR def. ATL
+NE  def. PIT
+IND def. JAX
+WAS def. DET
+
+Week 3
+MIN def. DET
+OAK def. TEN
+CLE def. PIT
+KC  def. IND
+LAC def. JAX
+ATL def. SEA
+TB  def. GB
+SF  def. DEN
+LAR def. ARI
+HOU def. CHI
+DAL def. NYG
+WAS def. PHI
+NO  def. CAR
+BUF def. MIA
+BAL def. NE
+NYJ def. CIN
+
+Week 4
+CHI def. NYG
+BAL def. BUF
+MIA def. CIN
+SEA def. DET
+PHI def. JAX
+NO  def. MIN
+CAR def. ARI
+DEN def. OAK
+SF  def. LAR
+LAC def. HOU
+NE  def. GB
+TB  def. KC
+PIT def. NYJ
+DAL def. WAS
+ATL def. CLE
+IND def. TEN
+
+Week 5
+IND def. DEN
+TEN def. WAS
+HOU def. JAX
+PHI def. ARI
+NE  def. DET
+SEA def. NO
+BAL def. CIN
+BUF def. PIT
+CHI def. MIN
+MIA def. NYJ
+SF  def. CAR
+DAL def. LAR
+KC  def. OAK
+TB  def. ATL
+GB  def. NYG
+CLE def. LAC
+
+Week 6
+WAS def. CHI
+MIN def. MIA
+SEA def. ARI
+DEN def. LAC
+PHI def. DAL
+CLE def. NE
+IND def. JAX
+NO  def. CIN
+BAL def. NYG
+GB  def. NYJ
+SF  def. ATL
+LAR def. CAR
+TB  def. PIT
+KC  def. BUF
+
+Week 7
+NO  def. ARI
+DAL def. DET
+TB  def. CAR
+DEN def. NYJ
+WAS def. GB
+CIN def. ATL
+OAK def. HOU
+BAL def. CLE
+CHI def. NE
+IND def. TEN
+SF  def. KC
+JAX def. NYG
+MIA def. PIT
+LAC def. SEA
+
+Week 8
+ATL def. CAR
+TB  def. BAL
+HOU def. TEN
+DAL def. CHI
+DEN def. JAX
+ARI def. MIN
+PHI def. PIT
+LAR def. SF
+MIA def. DET
+IND def. WAS
+NYJ def. NE
+SEA def. NYG
+CLE def. CIN
+NO  def. OAK
+BUF def. GB
+
+Week 9
+TEN def. KC
+IND def. NE
+CIN def. CAR
+SEA def. ARI
+OAK def. JAX
+NO  def. BAL
+TB  def. LAR
+GB  def. DET
+MIA def. CHI
+HOU def. PHI
+BUF def. NYJ
+MIN def. WAS
+LAC def. ATL
+
+Week 10
+TB  def. SEA
+LAR def. ARI
+IND def. OAK
+MIA def. CLE
+PHI def. WAS
+BUF def. MIN
+CHI def. DET
+KC  def. JAX
+PIT def. NO
+SF  def. LAC
+GB  def. DAL
+CAR def. ATL
+HOU def. NYG
+TEN def. DEN
+
+Week 11
+DEN def. OAK
+CIN def. PIT
+KC  def. LAC
+ARI def. SF
+PHI def. IND
+BAL def. CAR
+NE  def. NYJ
+LAR def. NO
+CHI def. ATL
+BUF def. CLE
+DAL def. MIN
+DET def. NYG
+GB  def. TEN
+WAS def. HOU
+
+Week 12
+MIA def. HOU
+BUF def. DET
+CHI def. NYJ
+SEA def. OAK
+KC  def. LAR
+TB  def. CLE
+TEN def. CIN
+WAS def. ATL
+IND def. PIT
+PHI def. GB
+ARI def. LAC
+NE  def. MIN
+CAR def. DEN
+BAL def. JAX
+DAL def. NYG
+SF  def. NO
+
+Week 13
+CIN def. KC
+IND def. DAL
+PIT def. ATL
+LAR def. SEA
+OAK def. LAC
+CLE def. HOU
+NYG def. WAS
+MIN def. NYJ
+DEN def. BAL
+GB  def. CHI
+TEN def. PHI
+MIA def. SF
+TB  def. NO
+DET def. JAX
+BUF def. NE
+
+Week 14
+TB  def. SF
+TEN def. JAX
+MIN def. DET
+CLE def. CIN
+CAR def. SEA
+BUF def. NYJ
+DAL def. HOU
+MIA def. LAC
+PHI def. NYG
+ARI def. NE
+LAR def. OAK
+KC  def. DEN
+PIT def. BAL
+
+Week 15
+LAR def. GB
+DET def. NYJ
+TEN def. LAC
+TB  def. CIN
+WAS def. NYG
+PHI def. CHI
+SEA def. SF
+BAL def. CLE
+KC  def. HOU
+NE  def. OAK
+ARI def. DEN
+DAL def. JAX
+NO  def. ATL
+BUF def. MIA
+IND def. MIN
+PIT def. CAR
+
+Week 16
+SF  def. WAS
+LAR def. DEN
+IND def. LAC
+NO  def. CLE
+TB  def. ARI
+GB  def. MIA
+BUF def. CHI
+NYJ def. JAX
+CAR def. DET
+MIN def. NYG
+DAL def. PHI
+PIT def. OAK
+TEN def. HOU
+BAL def. ATL
+SEA def. KC
+CIN def. NE
+
+Week 17
+ATL def. ARI
+BAL def. PIT
+LAC def. LAR
+NO  def. PHI
+DAL def. TEN
+NE  def. MIA
+WAS def. CLE
+KC  def. DEN
+SEA def. NYJ
+HOU def. JAX
+TB  def. CAR
+CHI def. DET
+GB  def. MIN
+IND def. NYG
+SF  def. OAK
+
+AFC WILDCARD
+BUF def. CLE
+TEN def. BAL
+KC  def. MIA
+
+AFC DIVISIONAL ROUND
+IND def. TEN
+KC  def. BUF
+
+AFC CONFERENCE CHAMPIONSHIP
+KC  def. IND
+
+NFC WILDCARD
+DAL def. PHI
+LAR def. NO
+GB  def. SF
+
+NFC DIVISIONAL ROUND
+GB  def. TB
+LAR def. DAL
+
+NFC CONFERENCE CHAMPIONSHIP
+GB  def. LAR
+
+SUPERBOWL
+KC  def. GB

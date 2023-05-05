@@ -32,7 +32,7 @@ def simulate_regular_season(elo_dict, schedule_dict, matchups_dict, team_records
     '''
     Simulate the regular season
     '''
-    with open('results.txt', 'w') as f:
+    with open('season_results.txt', 'w') as f:
         for week in range(1, 18):
             f.write(f'\nWeek {week}\n')
             for match in matchups_dict[week]:
@@ -133,7 +133,7 @@ def simulate_conference_playoffs(wc_bye, wc_matchups, elo_dict, playoff_seed, di
     '''
     conference_champ = ''
     new_playoff_seed = playoff_seed.copy()
-    with open("results.txt", "a") as f:
+    with open("season_results.txt", "a") as f:
         f.write(f"\n{division} WILDCARD\n")
         for home_team, away_team in wc_matchups.values():
             home_elo = elo_dict[home_team][0]
@@ -220,7 +220,7 @@ def simulate_superbowl(elo_dict, afc_team, nfc_team):
     '''
     Simulate the Super Bowl
     '''
-    with open("results.txt", "a") as f:
+    with open("season_results.txt", "a") as f:
         f.write("\nSUPERBOWL\n")
         home_team = afc_team
         away_team = nfc_team
@@ -345,7 +345,7 @@ def main():
 
     simulate_superbowl(elo_last_team, afc_champ, nfc_champ)
 
-    print("FULL SEASON SIMULATION COMPLETED VIEW THE RESULTS IN THE results.txt FILE")
+    print("FULL SEASON SIMULATION COMPLETED VIEW THE RESULTS IN THE season_results.txt FILE")
 
     return
 

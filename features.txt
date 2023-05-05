@@ -1,0 +1,16 @@
+Finding Top Features for Winning Teams from 2012-2021
+PD Rank
+T/G Rank
+SoS Rank
+
+Finding Top Features for Playoff Teams from 2012-2021
+PD Rank
+Def-YDS Rank
+T/G Rank
+SoS Rank
+
+Finding Top Features for Super Bowl Teams from 2012-2021
+PF Rank
+PD Rank
+Off-YDS Rank
+SoS Rank

@@ -1,9 +1,5 @@
-import nfl_data_py as nfl
 import polars as pl
-import pandas as pd
-import numpy as np
 import seaborn as sns
-from datetime import datetime
 from sklearn.manifold import TSNE
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import SelectFromModel
@@ -33,10 +29,6 @@ Then, make this a graph of these stats ranked in terms of Wins (y-axis):
 '''
 
 decade = [year for year in range(2012, 2022)]
-start_time = datetime.now()
-
-def current_time():
-    return (datetime.now() - start_time).total_seconds()
 
 def get_fig1(nfl_data_frame):
     '''
@@ -74,11 +66,11 @@ def get_fig2(nfl_data_frame):
 
     # Create the t-SNE scatterplot using Seaborn
     plt.figure(figsize=(12, 8))
-    sns.scatterplot(data=nfl_data_frame, x='t-SNE 1', y='Wins', hue='Highest Stat', palette='dark', size='Wins', legend="brief")
-    plt.title('t-SNE Graph of Wins vs. t-SNE Dimension 1')
+    sns.scatterplot(data=nfl_data_frame, x='t-SNE 1', y='t-SNE 2', hue='Highest Stat', palette='dark', size='Wins', legend="brief")
+    plt.title('t-SNE Demension 1 vs. t-SNE Dimension 2')
     return plt
 
-def find_features(nfl_data_frame):
+def find_features(nfl_data_frame, f):
     '''
     Originally used a Decision Tree Classifier to find the best features to use, 
     but it was not as accurate as using the rankings of the stats, hence why I
@@ -105,7 +97,7 @@ def find_features(nfl_data_frame):
     # Get the names of the filtered columns and print selected features
     selected_features = [feature for feature, selected in zip(new_columns_ranks, selector.get_support()) if selected]
     for feature in selected_features:
-        print(feature)
+        f.write(f'{feature}\n')
     return
 
 
@@ -160,11 +152,7 @@ def get_decade_list(dts_df):
         year_df.drop_in_place("Def Yds Rank")
         year_df.drop_in_place("T/G")
         year_df.drop_in_place("SoS")
-        #print(year_df)
-        #year_df.to_pandas() 
         decade_list.append(year_df)
-    # convert to numpy array
-    #decade_list = np.array(decade_list)
     return decade_list
 
 def main():
@@ -200,21 +188,21 @@ def main():
     get_fig2(super_bowl_decade_frame)
 
     # Find top features from each Dataframe
-    print("\nFinding Top Features for Winning Teams from 2012-2021")
-    find_features(full_decade_frame)
-    print("\nFinding Top Features for Playoff Teams from 2012-2021")
-    find_features(playoff_decade_frame)
-    print("\nFinding Top Features for Super Bowl Teams from 2012-2021")
-    find_features(super_bowl_decade_frame)
-
-    print(f"\nProgram finish in {current_time()} seconds")
+    with open ("features.txt", "w") as f:
+        f.write("Finding Top Features for Winning Teams from 2012-2021\n")
+        find_features(full_decade_frame, f)
+        f.write("\nFinding Top Features for Playoff Teams from 2012-2021\n")
+        find_features(playoff_decade_frame, f)
+        f.write("\nFinding Top Features for Super Bowl Teams from 2012-2021\n")
+        find_features(super_bowl_decade_frame, f)
 
     '''
     UNCOMMENT THE FOLLOWING TO SEE FEATURE AND TSNE PLOTS
     '''
     #plt.show()
 
-    print("UNCOMMENT LINE 215 ABOVE THIS PRINT STATEMENT IN MAIN.PY TO SEE FEATURE AND TSNE PLOTS")
+    print("\nUNCOMMENT LINE 202 ABOVE THIS PRINT STATEMENT IN MAIN.PY TO SEE FEATURE AND TSNE PLOTS")
+    print("FEATURES ARE ALSO PRINTED TO features.txt")
     return 0
 
 if __name__ == "__main__":

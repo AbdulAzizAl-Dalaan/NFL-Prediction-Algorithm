@@ -1,7 +1,11 @@
 # NFL-Prediction-Algorithm
-- Team Decade Data Source: https://www.pro-football-reference.com/teams/
-- Source for Feature Classification: https://towardsdatascience.com/feature-selection-using-random-forest-26d7b747597f
-- Source for FiveThirtyEight Prediction: https://fivethirtyeight.com/features/how-our-nfl-predictions-work/
-- Source for NFL Elo: https://fivethirtyeight.com/methodology/how-our-nfl-predictions-work/
-- Polars Documentation: https://www.pola.rs/
-- season_data.csv was provided by nfl_data_py library: https://github.com/cooperdff/nfl_data_py
+### Prerequisites
+- python3
+- pip3
+- venv
+
+### Running the program
+- To run the program, run the following command in the terminal <br>
+```./run_code.sh``` <br>
+This will automatically install all the dependencies and create necessary output files.
+- NOTE: the TSNE and other figures are not shown by default you must uncomment the the line ```plt.show()``` in the main function in the main.py file to see them.
